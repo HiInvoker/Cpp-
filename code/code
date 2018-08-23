@@ -1,0 +1,288 @@
+1.c++ 学习策略： 
+1).依靠解决问题来学习 2).实践：编程，测试，改bug
+
+2.第一个c++程序： 
+#include <iostream>
+
+int main()
+{
+    // display Aloha to the console.
+    std:: cout << "Aloha world!" << std::endl;
+
+    return 0;
+}
+  
+
+3.编码规范38：不准使用 制表 和 分页 等特殊字符
+
+4.编码规范68：总是将函数返回值明确列出的
+
+5.namespace:
+类似于一个圈定的范围，如果在该名词空间就会起作用，不在就没有，如：
+
+namespace car
+namespace qq
+
+car:: qq
+则是第一个对象被引用
+
+6.namespace 推荐用法：
+
+#include <iostream>
+
+using namespace std::cout;
+using namespace endl;
+int main()
+{
+    // display Aloha to the console.
+    cout << "Aloha world!" << endl;
+
+    return 0;
+}
+
+
+7.编译过程：
+预处理——》编译——》汇编——》链接
+        生成汇编代码  生成机器代码 生成可执行文件
+
+8.编码规范6：函数名必须是动词（或者动宾短语），名字中的各个单词首字母大写，其余字母小写，但函数的首字母要小写，如：
+displayMessage()
+computeTotalWidth()
+
+9.编码规范3：代表类型的名字必须首字母大写并且其他字母大小写混合，如：
+typedef xxx NewTypeName
+
+typedef unsigned int UInt
+typedef unsigned int* PInt
+
+10.编码规范5：命名常量（包括枚举值）必须全部大写并由下划分隔单词
+
+MAX_ITERATIONS
+
+11.编码规范26：布尔变量/函数的命名应使用前缀"is"
+
+bool isSet, isVisible;
+bool isBoy();
+bool canFound();
+
+12.bool示例
+
+#include <iostream>
+
+int main()
+{
+    bool isAlpha;
+    isAlpha = false;
+
+    // display Aloha to the console.
+    std:: cout << "isAlpha = " << isAlpha << std::endl;
+
+    std:: cout << std::boolisAlpha << 
+                  "isAlpha = " << isAlpha << std::endl;
+
+    return 0;
+}
+
+13.编码规范39：断行必须很明显（在逗号或运算符后换行， 新行要对齐）
+
+14.编码规范45：类型转换必须显示声明，永远不要依赖隐式类型转换
+
+e:
+floatValue = static_cast<float>(intValue)
+
+std:: cout << static_cast<double> (1)/2; 
+
+15.变量的初始化：
+
+int x = 1;
+
+int x(1); //c++
+
+int x, x(1); // Error!
+
+16.变量的局部作用域：
+
+void function(){
+    for (int i = 0; i < 10; i++){
+    
+        int j;  
+    } // i的作用域为从循环开始到结束
+
+}
+
+--------------------------------------------
+void function(){
+
+    for (int i = 0; i < 10; i++){
+    
+        int j;  
+    } // i的作用域为从循环开始到结束
+
+    for (int i = 0; i < 10; i++){
+        int j;
+    }
+    //可在两个非嵌套的块中声明两个i
+}
+
+------------------------------------------
+void function(){
+
+    int i = 0;
+    for (int i = 0; i < 10; i++){
+    
+        int j;  
+    }
+
+    //不可在两个嵌套的块中声明两个i
+}
+
+17.一元作用域解析符 ::
+
+局部变量名与全局变量名相同时，可用::访问全局变量
+
+#include <iostream>
+
+int v1 = 10;
+
+int main()
+{
+    int v1 = 5;
+
+    std:: cout << "local variable v1 = " << v1 << std:: endl;
+    std:: cout << "global variable v1 = " << ::v1 << std:: endl; 
+
+    return 0;
+}
+
+18. 编译器如何匹配重载函数(同名不同参数的函数)调用
+——》看参数：个数 类型 顺序
+
+#include <iostream>
+
+int maxNumber(int num1, int num2)
+{
+    if (num1 > num2){
+        return num1;
+    }else{
+        return num2; 
+    }   
+}
+
+int maxNumber(double num1, double num2)
+{
+    if (num1 > num2){
+        return num1;
+    }else{
+        return num2;
+    } 
+}
+
+int main()
+{
+    std:: cout << maxNumber(1, 2) << std:: endl;
+    return 0;
+}
+
+19.函数默认参数
+可以声明带默认参数值的函数 定义时：参数列表中默认值参数应后置          void t1(int x, int y = 0, int z = 0);
+无参调用函数时，默认值会被传递给形式参数 调用时：参数列表中实参应前置  t1(1);
+
+#include <iostream>
+
+void printArea(double radius = 1)
+{
+
+    double area = raius * radius * 3.14159;
+    std:: cout << "Area is " << area << std:: endl;
+}
+
+int main()
+{
+    printArea();
+    printArea(4);
+    return 0;
+}
+
+20.debug一段代码
+
+void printArea(double radius = 1); 1.将 "=1" 改为 "=2",能否解决问题
+                                   2.将 "=1" 删掉，可行否？
+                                   3.将定义的一整行删掉，能否解决？
+
+int main()
+{
+    printArea();
+    printArea(4);
+    return 0;
+}
+
+void printArea(double radius = 2) 4.将 "=2" 改为 "=1" 
+{                                 5.将 "=2" 删掉            
+    pass // do something 
+}
+
+修改为：选项5
+
+
+21.bebug 
+
+#include <iostream>
+
+using namespace std::cout;
+using namespace std::endl;
+
+int add(int x, int y = 10)
+{
+    return x + y;
+}
+
+int add(int x)
+{
+    return x + 100;
+}
+
+int main()
+{
+    add(1);
+    cin.get();
+    return 0;
+}
+
+在main函数中调用add函数时会产生冲突
+
+
+22.内联函数（inline Functions）
+
+函数的分析：
+
+Advantage 易读易维护
+Disadvantage 运行时性能开销大
+
+使用内联函数
+目的：减小性能开销
+方法：将代码插入到调用处
+结果：使程序变大        
+总结：以空间换时间
+
+eg:
+inline int max(int a, int b)
+{
+    return (a > b ? a : b);
+}
+
+但是不要：
+int max(int a, int b);
+// call max()
+
+inline int max(int a, int b)
+{
+    return (a > b ? a : b);
+}
+
+内联函数只是一种编译机制
+inline是对编译器的请求，不是命令，所有有可能不会执行
+使用于短函数
+大多数编译器不会把带有循环，递归等或者代码比较多的函数进行内联编译
+
+
+
