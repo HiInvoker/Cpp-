@@ -285,4 +285,320 @@ inline是对编译器的请求，不是命令，所有有可能不会执行
 大多数编译器不会把带有循环，递归等或者代码比较多的函数进行内联编译
 
 
+23.引用：
+1). 引用就是另一个变量的别名
+2). 通过对引用变量做操作就能够对读写变量做操作
+
+int x;
+int& y = x;
+
+eg:
+int x = 0;
+int& y = x;
+
+y++;
+std:: cout << x << std:: endl;
+
+>>>1
+
+
+24.编码规范51：C++ 指针与引用符号应该靠近其类型名而非名字
+eg: float* x; int& y;
+
+25.引用可做函数参数，但调用时只需传普通变量即可，在被调用函数中改变引用变量的值，则改变的是实参的值
+
+void swap(int& x, int& y)
+{
+    int t = x;
+    x = y;
+    y = x;
+}
+
+int a = 1;
+int b = 2;
+
+swap(a, b);
+
+std:: cout << a;
+std:: cout << " " << b << std:: endl;
+
+>>>2 1
+
+26.c++ 中通过new申请动态内存
+new <类型名>(初值) //申请一个变量的空间
+new <类型名>[常量表达式(长度)] //申请数组
+
+如果申请成果，返回指定类型内存的地址；！！！！
+如果申请失败，返回空指针(整数0)
+
+使用动态内存完毕之后，用delete来释放
+delete <指针名>;    //删除一个变量/对象
+delete []<指针名>;  //删除数组空间
+
+27.编码规范70: c++用“0”代替NULL;
+
+c: 
+char* s = (char* )malloc(sizeof(char));
+free(s);
+
+c++:
+char* s = new char(49); //注意！这里返回的是指针！！
+delete s;
+
+28.c++ 内存模型：
+stack:
+编译器自动分配
+Heap:
+一般为程序员分配
+堆向高地址方向生长，栈向低地址方向生长
+
+Global/Static
+程序启动时就在此，程序结束时候释放
+Const
+所有常量都放一起，该区域内容不可更改
+
+eg:
+int arr[3];
+
+int myFunc()
+{
+    int a;
+    char* p;
+    char* str = "Hello world!";   
+    
+}
+
+数组在全局变量区，字符在常量区， a，p，str在栈区
+
+int myFunc1(int* pi)
+{
+    char* pc;
+    pc = static_cast<char*> new char[8];   
+
+}
+内部的数组在堆区（因为使用new申请的），pc，pi在栈区
+
+对于数组a[]，a是数组a[]的首地址别名（指针常量）即其地址是不可变的
+访问里面的元素可以用：
+a[0], a[1]
+*(a+0), *(a+1)
+
+29.命名常量
+const double PI = 3.1415;
+const int size = 3;
+
+eg:
+const int ARRAY_SIZE = 10;
+int arr[ARRAY_SIZE];//OK in c++, ERROR in c
+因为数组里面的长度必须为常量。这种常量的命名方式在c++可行，c不可行（define ARRAY_SIZE 10）
+
+30.
+Pointer to Const（常量指针）
+特征：指针所指向的内容不可通过指针的间接引用（*p）来改变
+
+const int* p1;
+const int x = 1; 
+p1 = &x; //如果要用常量指针指向一个值，那么该值必须用Const
+
+*p1= 10; //ERROR，所指值不可变
+
+Pointer Const（指针常量）
+指针本身的内容是个常量，不可以改变
+
+int x = 1, y = 1;
+int* const p2 = &x;
+
+*p2 = 10; //Okay
+p2 = &y;  //ERROR （指针是个常量）
+
+数组名就是一个指针常量
+
+int a[] = {1,2,3};
+a = a+1; //ERROR
+
+31.指针内存布局
+
+以下代码在函数内部：
+const int a = 5;
+int b = 9;
+const int* pa = &a;
+int* const pb = &b;
+
+a，pb在常量区 pa,b在栈区
+
+总结：
+const int* x;
+int* const y;
+
+const在谁前面，谁就不允许改变
+
+32.面对对象的特征
+A PIE：A抽象 P多态 I继承 E封装
+
+对象由属性和函数构成，它是类的具体化，对象是类的实例
+
+int ia;
+struct S {int m; int n;};
+S sa;
+
+class C
+{
+    int p;
+    int f();
+};
+C ca; ca即为对象
+
+类由数据域和构造函数构成
+eg：
+class Circle
+{
+public: 
+  double radius; //数据域
+  Circle()       //构造函数，与类名相同，可以不声明构造函数，编译器会提供一个无参构造函数
+  {
+    raduis = 1;
+  }
+  Circle(double newRadius) //重载构造函数
+  {
+    radius = newRadius; 
+  }
+
+  double getArea()  //method
+  {
+    return radius * radius * 3.14159; 
+  }
+
+};
+
+构造函数：
+初始化对象
+与类同名
+无返回值
+可重载
+可不带参数
+
+对象访问运算符
+Circle c1(5); //创建对象
+Circle c2();
+
+c1.radius
+>>>5
+c1.getArea()
+>>>
+
+33.为对象和类命名
+
+声明一个自定义的类时，类名中的单词首字母要大写
+
+class Circle
+{
+}
+
+对象的命名方式与变量类似
+
+Circle c1;
+
+类是一种数据类型：
+用基本类型定义对象：int x(4); 
+用类名定义对象：    Circle circle1；Circle circle2(4);
+
+34.成员拷贝
+利用‘=’将一个对象的内容拷贝给另一个对象，默认情况下，对象的每个数据域都被拷贝到另一个对象的对应部分
+
+circle2 = circle1;
+将circle1的半径拷贝给circle2，虽然它们半径相同，但是它们还是不同的对象
+
+35.c++里面用Class 来代替了 struct
+
+struct Student
+{
+  int id;
+  char firstName[20];
+};
+
+class Student
+{
+public:
+  int id;
+  char firstName[20];
+};
+
+36.c++中的声明与实现分离
+类声明描述了类的约定
+类实现则实现该约定
+
+.h:    类声明
+.cpp : 类实现 FunctionType ClassName:: FunctionName(Arguments){}
+                                    域分隔符
+
+Circle.h:
+
+class Circle
+{
+public:
+  double radius;
+  
+  Circle();
+
+  Circle(double);
+
+  double getArea();
+};
+
+Circle.cpp:
+
+Circle:: Circle(){
+  radius = 1; 
+}
+
+Circle:: Circle(double newRadius){
+  radius = newRadius;
+}
+
+double Circle:: getArea(){
+  return radius * radius * 3.1415926;
+}
+
+mian.cpp:
+
+#include <iostream>
+#include "Circle.h"
+
+int main()
+{
+    Circle c1;
+    Circle c2(5.0);
+  
+    std:: cout << c1.getArea() << std:: endl;
+
+    std:: cout << c2.getArea() << std:: endl;
+  
+    return 0;
+}
+
+编译的时候为 g++ Circle.cpp main.cpp
+
+
+37.内联函数和内敛声明
+
+当函数在类声明中实现，它自动成为内联函数
+
+class A {
+  inline f();
+};
+A::f(){}
+-----------------------------
+class A {
+  f() { //do something
+  }
+};
+-----------------------------
+class A{
+  f();
+}
+inline A::f() {
+  //do something
+}
+
+
 
